@@ -69,6 +69,10 @@ public:
 	float get_wheel_left() const override { return _wheel_left; }
 	float get_wheel_right() const override { return _wheel_right; }
 
+	// DROBOT: 서보/리니어 액추에이터 명령 getter
+	float get_servo_arm_cmd() const override { return _servo_arm_cmd; }
+	float get_linear_act_cmd() const override { return _linear_act_cmd; }
+
 private:
 
 	enum class vtol_mode {
@@ -88,6 +92,10 @@ private:
 	float _wheel_left{0.f};
 	float _wheel_right{0.f};
 	uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};
+
+	// DROBOT: 서보/리니어 액추에이터 명령 (정규화 [-1, 1])
+	float _servo_arm_cmd{1.0f};    // 1.0=팔 펴짐(MC), -1.0=팔 접힘(rover)
+	float _linear_act_cmd{-1.0f};  // -1.0=수축(MC), 1.0=확장(rover)
 
 	void parameters_update() override;
 

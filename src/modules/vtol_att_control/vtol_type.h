@@ -226,6 +226,10 @@ public:
 	virtual float get_wheel_left() const { return 0.f; }
 	virtual float get_wheel_right() const { return 0.f; }
 
+	// DROBOT: 서보/리니어 액추에이터 명령 getter
+	virtual float get_servo_arm_cmd() const { return 0.f; }
+	virtual float get_linear_act_cmd() const { return 0.f; }
+
 	/**
 	 * @return Minimum front transition time scaled for air density (if available) [s]
 	*/

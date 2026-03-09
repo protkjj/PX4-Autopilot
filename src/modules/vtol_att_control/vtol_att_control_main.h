@@ -82,6 +82,7 @@
 #include <uORB/topics/vehicle_local_position_setpoint.h>
 #include <uORB/topics/vtol_vehicle_status.h>
 #include <uORB/topics/actuator_motors.h>
+#include <uORB/topics/actuator_servos.h>
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/vehicle_thrust_setpoint.h>
 #include <uORB/topics/vehicle_torque_setpoint.h>
@@ -183,6 +184,7 @@ private:
 	uORB::PublicationMulti<vehicle_torque_setpoint_s>	_vehicle_torque_setpoint0_pub{ORB_ID(vehicle_torque_setpoint)};
 	uORB::PublicationMulti<vehicle_torque_setpoint_s>	_vehicle_torque_setpoint1_pub{ORB_ID(vehicle_torque_setpoint)};
 	uORB::Publication<actuator_motors_s>			_actuator_motors_pub{ORB_ID(actuator_motors)};  // DROBOT: 로버 휠
+	uORB::Publication<actuator_servos_s>			_actuator_servos_pub{ORB_ID(actuator_servos)};  // DROBOT: 서보/리니어
 	uORB::Publication<vtol_vehicle_status_s>		_vtol_vehicle_status_pub{ORB_ID(vtol_vehicle_status)};
 
 	orb_advert_t	_mavlink_log_pub{nullptr};	// mavlink log uORB handle

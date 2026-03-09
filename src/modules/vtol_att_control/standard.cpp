@@ -175,12 +175,16 @@ void Standard::update_transition_state()
 		_pusher_throttle = 0.0f;
 
 		if (_time_since_trans_start < SERVO_DURATION) {
-			// Phase 1: 서보 팔 접기 (0~5s)
-			// TODO: 서보 위치 명령 발행 (CA_SV_CS0, CS1)
+			// Phase 1: 서보 팔 접기 (0~5s), 1.0→-1.0 램프
+			float progress = _time_since_trans_start / SERVO_DURATION;
+			_servo_arm_cmd = 1.0f - 2.0f * progress;
+			_linear_act_cmd = -1.0f; // 수축 유지
 
 		} else if (_time_since_trans_start < TOTAL_TRANSITION_TIME) {
-			// Phase 2: 리니어 액추에이터 (5~10s)
-			// TODO: 리니어 위치 명령 발행 (CA_SV_CS2, CS3)
+			// Phase 2: 리니어 확장 (5~10s), -1.0→1.0 램프
+			float progress = (_time_since_trans_start - SERVO_DURATION) / LINEAR_DURATION;
+			_servo_arm_cmd = -1.0f; // 접힌 상태 유지
+			_linear_act_cmd = -1.0f + 2.0f * progress;
 		}
 		// Phase 3: 10s 경과 → isFrontTransitionCompletedBase()에서 FW_MODE 전환
 
@@ -190,17 +194,23 @@ void Standard::update_transition_state()
 		_wheel_right = 0.0f;
 
 		if (_time_since_trans_start < LINEAR_DURATION) {
-			// Phase 1: 리니어 역방향 (0~5s)
-			// TODO: 리니어 위치 명령 발행 (CA_SV_CS2, CS3)
+			// Phase 1: 리니어 수축 (0~5s), 1.0→-1.0 램프
+			float progress = _time_since_trans_start / LINEAR_DURATION;
+			_servo_arm_cmd = -1.0f; // 접힌 상태 유지
+			_linear_act_cmd = 1.0f - 2.0f * progress;
 			mc_weight = 0.0f;
 
 		} else if (_time_since_trans_start < TOTAL_TRANSITION_TIME) {
-			// Phase 2: 서보 팔 펴기 (5~10s)
-			// TODO: 서보 위치 명령 발행 (CA_SV_CS0, CS1)
+			// Phase 2: 서보 팔 펴기 (5~10s), -1.0→1.0 램프
+			float progress = (_time_since_trans_start - LINEAR_DURATION) / SERVO_DURATION;
+			_servo_arm_cmd = -1.0f + 2.0f * progress;
+			_linear_act_cmd = -1.0f; // 수축 유지
 			mc_weight = 0.0f;
 
 		} else {
-			// Phase 3: 전환 완료 직전, MC 가중치 올림
+			// Phase 3: 전환 완료, MC 준비
+			_servo_arm_cmd = 1.0f;
+			_linear_act_cmd = -1.0f;
 			mc_weight = 1.0f;
 		}
 	}
@@ -278,30 +288,28 @@ void Standard::fill_actuator_outputs()
 		_torque_setpoint_0->xyz[2] = _vehicle_torque_setpoint_virtual_mc->xyz[2];
 		_thrust_setpoint_0->xyz[2] = _vehicle_thrust_setpoint_virtual_mc->xyz[2];
 
-		/*
-		// FW actuators:
-		if (!_param_vt_elev_mc_lock.get()) {
-			_torque_setpoint_1->xyz[0] = _vehicle_torque_setpoint_virtual_fw->xyz[0];
-			_torque_setpoint_1->xyz[1] = _vehicle_torque_setpoint_virtual_fw->xyz[1];
-		}
-
-		_thrust_setpoint_0->xyz[0] = _pusher_throttle;
-		*/
+		// DROBOT: 서보/리니어 명령 (CA가 roll→서보, pitch→리니어로 매핑)
+		_torque_setpoint_1->xyz[0] = _servo_arm_cmd;   // 팔 펴짐 유지
+		_torque_setpoint_1->xyz[1] = _linear_act_cmd;  // 수축 유지
 		break;
 
 	case vtol_mode::TRANSITION_TO_FW:
 	// FALLTHROUGH
 	case vtol_mode::TRANSITION_TO_MC:
-		// DROBOT: 전환 중 MC 모터는 가중치 적용, 휠/FW 출력 전부 0
+		// DROBOT: 전환 중 MC 모터는 가중치 적용
 		_torque_setpoint_0->xyz[0] = _vehicle_torque_setpoint_virtual_mc->xyz[0] * _mc_roll_weight;
 		_torque_setpoint_0->xyz[1] = _vehicle_torque_setpoint_virtual_mc->xyz[1] * _mc_pitch_weight;
 		_torque_setpoint_0->xyz[2] = _vehicle_torque_setpoint_virtual_mc->xyz[2] * _mc_yaw_weight;
 		_thrust_setpoint_0->xyz[2] = _vehicle_thrust_setpoint_virtual_mc->xyz[2] * _mc_throttle_weight;
-		// FW/휠 출력 없음 (초기값 0 유지)
+		// DROBOT: 서보/리니어 명령 (CA가 roll→서보, pitch→리니어로 매핑)
+		_torque_setpoint_1->xyz[0] = _servo_arm_cmd;
+		_torque_setpoint_1->xyz[1] = _linear_act_cmd;
 		break;
 
 	case vtol_mode::FW_MODE:
-		// DROBOT: 로버 모드 — MC/FW 출력 전부 0 (휠은 actuator_motors 직접 발행)
+		// DROBOT: 로버 모드 — MC 출력 0 (휠/서보는 직접 발행)
+		_servo_arm_cmd = -1.0f;   // 팔 접힘 유지
+		_linear_act_cmd = 1.0f;   // 확장 유지
 		break;
 	}
 }
