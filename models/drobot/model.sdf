@@ -1,0 +1,1015 @@
+<sdf version='1.11'>
+  <model name='drobot'>
+    <link name='base_footprint'>
+      <inertial>
+        <pose>0.0045406001673616182 -0.001091137101847573 0.46894164458916998 0 0 0</pose>
+        <mass>0.84474823432659907</mass>
+        <inertia>
+          <ixx>0.0012438381750527749</ixx>
+          <ixy>2.4086819977119051e-07</ixy>
+          <ixz>2.1902383561519211e-05</ixz>
+          <iyy>0.0021754330600189391</iyy>
+          <iyz>8.5263166697178115e-06</iyz>
+          <izz>0.001352161793219492</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_footprint_fixed_joint_lump__base_link_collision'>
+        <pose>0 0 0.25 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/base_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='base_footprint_fixed_joint_lump__camera_collision_1'>
+        <pose>0.010101000000000001 -0.027788 0.60999999999999999 -3.1415853071795872 0 -3.1415853071795872</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/camera.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='base_footprint_fixed_joint_lump__lidar_collision_2'>
+        <pose>0.010101000000000001 -0.027788 0.55153999999999992 -3.1415853071795872 0 -3.1415853071795872</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/lidar.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='base_footprint_fixed_joint_lump__base_link_visual'>
+        <pose>0 0 0.25 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/base_link.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <ambient>1 1 1 1</ambient>
+        </material>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__camera_visual_1'>
+        <pose>0.010101000000000001 -0.027788 0.60999999999999999 -3.1415853071795872 0 -3.1415853071795872</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/camera.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.987500012 1 1 1</diffuse>
+          <ambient>0.987500012 1 1 1</ambient>
+        </material>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__lidar_visual_2'>
+        <pose>0.010101000000000001 -0.027788 0.55153999999999992 -3.1415853071795872 0 -3.1415853071795872</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/lidar.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.987500012 1 1 1</diffuse>
+          <ambient>0.987500012 1 1 1</ambient>
+        </material>
+      </visual>
+      <sensor name='camera' type='rgbd'>
+        <update_rate>15</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <topic>/camera</topic>
+        <camera>
+          <horizontal_fov>1.0469999999999999</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.10000000000000001</near>
+            <far>10</far>
+          </clip>
+        </camera>
+        <pose>0.010101000000000001 -0.027788 0.60999999999999999 0 0 0</pose>
+      </sensor>
+      <sensor name='imu' type='imu'>
+        <topic>/imu</topic>
+        <update_rate>50</update_rate>
+        <always_on>true</always_on>
+        <imu>
+          <angular_velocity>
+            <x>
+              <noise type='gaussian'>
+                <mean>0</mean>
+                <stddev>0.00020000000000000001</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type='gaussian'>
+                <mean>0</mean>
+                <stddev>0.00020000000000000001</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type='gaussian'>
+                <mean>0</mean>
+                <stddev>0.00020000000000000001</stddev>
+              </noise>
+            </z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x>
+              <noise type='gaussian'>
+                <mean>0</mean>
+                <stddev>0.017000000000000001</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type='gaussian'>
+                <mean>0</mean>
+                <stddev>0.017000000000000001</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type='gaussian'>
+                <mean>0</mean>
+                <stddev>0.017000000000000001</stddev>
+              </noise>
+            </z>
+          </linear_acceleration>
+        </imu>
+        <pose>0 0 0.26000000000000001 0 0 0</pose>
+      </sensor>
+      <sensor name="air_pressure_sensor" type="air_pressure">
+        <always_on>1</always_on>
+        <update_rate>50</update_rate>
+        <air_pressure>
+          <pressure>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>3</stddev>
+            </noise>
+          </pressure>
+        </air_pressure>
+      </sensor>
+      <sensor name="magnetometer_sensor" type="magnetometer">
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <magnetometer>
+          <x>
+            <noise type="gaussian">
+              <stddev>0.0001</stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <stddev>0.0001</stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <stddev>0.0001</stddev>
+            </noise>
+          </z>
+        </magnetometer>
+      </sensor>
+      <sensor name='lidar' type='gpu_lidar'>
+        <topic>/scan</topic>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.1415899999999999</min_angle>
+              <max_angle>3.1415899999999999</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>12</max>
+            <resolution>0.01</resolution>
+          </range>
+        </lidar>
+        <pose>0.010101000000000001 -0.027788 0.55154000000000003 -3.1415899999999999 0 -3.1415899999999999</pose>
+      </sensor>
+    </link>
+    <joint name='lf_arm_rev' type='revolute'>
+      <pose relative_to='base_footprint'>0.001 0.024 0.48999999999999999 -3.1415853071795872 0 -3.1415853071795872</pose>
+      <parent>base_footprint</parent>
+      <child>left_front_arm</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>1.5708</upper>
+          <effort>14</effort>
+          <velocity>0.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>4</damping>
+          <friction>5</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='left_front_arm'>
+      <pose relative_to='lf_arm_rev'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0050715776801169028 0.089860856919584661 0.117721584760137 0 0 0</pose>
+        <mass>0.50833975619515392</mass>
+        <inertia>
+          <ixx>0.00077054239858691254</ixx>
+          <ixy>0.0001076841801150101</ixy>
+          <ixz>1.392451700839607e-05</ixz>
+          <iyy>0.002487839208583727</iyy>
+          <iyz>-5.1248511794928751e-05</iyz>
+          <izz>0.003000022521517349</izz>
+        </inertia>
+      </inertial>
+      <collision name='left_front_arm_collision'>
+        <pose>0 0 -0.21688099999999999 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_front_arm.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='left_front_arm_fixed_joint_lump__left_side_frame_collision_1'>
+        <pose>0.00050000000000000001 -0.00079799999999999999 -0.217469 0.010035000000000001 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_side_frame.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='left_front_arm_visual'>
+        <pose>0 0 -0.21688099999999999 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_front_arm.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1 0.400000006 0.199999988 1</diffuse>
+          <ambient>1 0.400000006 0.199999988 1</ambient>
+        </material>
+      </visual>
+      <visual name='left_front_arm_fixed_joint_lump__left_side_frame_visual_1'>
+        <pose>0.00050000000000000001 -0.00079799999999999999 -0.217469 0.010035000000000001 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_side_frame.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.37500003 0.37500003 0.37500003 1</diffuse>
+          <ambient>0.37500003 0.37500003 0.37500003 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='lf_wheel_con' type='revolute'>
+      <pose relative_to='left_front_arm'>-0.11606 0.1237235034496787 0.12979803727626041 0.010035000000000001 0 0</pose>
+      <parent>left_front_arm</parent>
+      <child>left_front_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.10000000000000001</damping>
+          <friction>0.050000000000000003</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='left_front_wheel'>
+      <pose relative_to='lf_wheel_con'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>-3.8063440621627398e-08 0.014713097729811799 -4.3305813102190198e-08 0 0 0</pose>
+        <mass>0.15446822784620601</mass>
+        <inertia>
+          <ixx>0.00060097233696645503</ixx>
+          <ixy>-1.7094296974558999e-11</ixy>
+          <ixz>1.67775124672545e-10</ixz>
+          <iyy>0.00115446036705922</iyy>
+          <iyz>-2.6110988119895099e-11</iyz>
+          <izz>0.00060097217560458401</izz>
+        </inertia>
+      </inertial>
+      <collision name='left_front_wheel_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_front_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>0.29999999999999999</mu2>
+              <fdir1>1 0 0</fdir1>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='left_front_wheel_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_front_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.81249994 0.81249994 0.81249994 1</diffuse>
+          <ambient>0.81249994 0.81249994 0.81249994 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='lr_wheel_con' type='revolute'>
+      <pose relative_to='left_front_arm'>0.11783 0.1237158769776794 0.13055799901011611 0.010035000000000001 0 0</pose>
+      <parent>left_front_arm</parent>
+      <child>left_rear_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.10000000000000001</damping>
+          <friction>0.050000000000000003</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='left_rear_wheel'>
+      <pose relative_to='lr_wheel_con'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>-0.00076453951826237199 0.0131052613053511 -0.00076453355362535202 0 0 0</pose>
+        <mass>0.152313021640434</mass>
+        <inertia>
+          <ixx>0.00059832664563888105</ixx>
+          <ixy>1.1681776058761199e-11</ixy>
+          <ixz>1.64181067073089e-10</ixz>
+          <iyy>0.00115252805512864</iyy>
+          <iyz>2.6799814807065599e-11</iyz>
+          <izz>0.00059832647727236404</izz>
+        </inertia>
+      </inertial>
+      <collision name='left_rear_wheel_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_rear_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>0.29999999999999999</mu2>
+              <fdir1>1 0 0</fdir1>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='left_rear_wheel_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_rear_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.81249994 0.81249994 0.81249994 1</diffuse>
+          <ambient>0.81249994 0.81249994 0.81249994 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='lr_arm_rev' type='revolute'>
+      <pose relative_to='base_footprint'>0.001 0.024 0.48999999999999999 1.5708 -4.2351647362715017e-22 -3.1415853071795872</pose>
+      <parent>base_footprint</parent>
+      <child>left_rear_arm</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>1.5708</upper>
+          <effort>14</effort>
+          <velocity>0.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>3</damping>
+          <friction>3</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='left_rear_arm'>
+      <pose relative_to='lr_arm_rev'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.018998000000000001 -0.00053399999999999997 0.112534 0 0 0</pose>
+        <mass>0.123064431731573</mass>
+        <inertia>
+          <ixx>0.00013574161297281399</ixx>
+          <ixy>6.1364462259140804e-06</ixy>
+          <ixz>-3.9194932827752498e-06</ixz>
+          <iyy>6.7603604872994502e-05</iyy>
+          <iyz>4.4890603262993601e-05</iyz>
+          <izz>0.000106939767969889</izz>
+        </inertia>
+      </inertial>
+      <visual name='left_rear_arm_visual'>
+        <pose>0 -0.022671 -0.21688099999999999 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/left_rear_arm.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1 0.400000006 0.199999988 1</diffuse>
+          <ambient>1 0.400000006 0.199999988 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rf_arm_rev' type='revolute'>
+      <pose relative_to='base_footprint'>0.001 -0.025000000000000001 0.499 0 0 -3.1415853071795872</pose>
+      <parent>base_footprint</parent>
+      <child>right_front_arm</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>1.5708</upper>
+          <effort>14</effort>
+          <velocity>0.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>4</damping>
+          <friction>5</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='right_front_arm'>
+      <pose relative_to='rf_arm_rev'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>-0.018368118475751379 0.08591055429017852 -0.1073204834602841 0 0 0</pose>
+        <mass>0.50833975619515392</mass>
+        <inertia>
+          <ixx>0.001637790050149695</ixx>
+          <ixy>-0.00060140127263198036</ixy>
+          <ixz>0.00047129580585575381</ixz>
+          <iyy>0.0034976283089567569</iyy>
+          <iyz>0.00072356949194208719</iyz>
+          <izz>0.003733232472935367</izz>
+        </inertia>
+      </inertial>
+      <collision name='right_front_arm_collision'>
+        <pose>0 -0.0024880000000000002 -0.17599300000000001 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_front_arm.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='right_front_arm_fixed_joint_lump__right_side_frame_collision_1'>
+        <pose>0.00050000000000000001 0.165912 -0.13141700000000001 1.5947 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_side_frame.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='right_front_arm_visual'>
+        <pose>0 -0.0024880000000000002 -0.17599300000000001 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_front_arm.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1 0.400000006 0.199999988 1</diffuse>
+          <ambient>1 0.400000006 0.199999988 1</ambient>
+        </material>
+      </visual>
+      <visual name='right_front_arm_fixed_joint_lump__right_side_frame_visual_1'>
+        <pose>0.00050000000000000001 0.165912 -0.13141700000000001 1.5947 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_side_frame.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.37500003 0.37500003 0.37500003 1</diffuse>
+          <ambient>0.37500003 0.37500003 0.37500003 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rf_wheel_con' type='revolute'>
+      <pose relative_to='right_front_arm'>-0.11606 0.12692314148853531 -0.1323491544791412 0.023899999999999925 0 0</pose>
+      <parent>right_front_arm</parent>
+      <child>right_front_wheel</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.10000000000000001</damping>
+          <friction>0.050000000000000003</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='right_front_wheel'>
+      <pose relative_to='rf_wheel_con'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>3.5145523963331397e-08 0.0147130944445312 -4.6145609236547503e-08 0 0 0</pose>
+        <mass>0.15446818358736</mass>
+        <inertia>
+          <ixx>0.00060097202992856404</ixx>
+          <ixy>2.9850835345757298e-11</ixy>
+          <ixz>-1.05292533647964e-10</ixz>
+          <iyy>0.00115446021177649</iyy>
+          <iyz>-1.7962147502888199e-11</iyz>
+          <izz>0.00060097233830476199</izz>
+        </inertia>
+      </inertial>
+      <collision name='right_front_wheel_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_front_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>0.29999999999999999</mu2>
+              <fdir1>1 0 0</fdir1>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='right_front_wheel_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_front_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.81249994 0.81249994 0.81249994 1</diffuse>
+          <ambient>0.81249994 0.81249994 0.81249994 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rr_wheel_con' type='revolute'>
+      <pose relative_to='right_front_arm'>0.11706 0.12692314148853531 -0.1323491544791412 0.023899999999999925 0 0</pose>
+      <parent>right_front_arm</parent>
+      <child>right_rear_wheel</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.10000000000000001</damping>
+          <friction>0.050000000000000003</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='right_rear_wheel'>
+      <pose relative_to='rr_wheel_con'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>3.5145523227808597e-08 0.0147130944445312 -4.6145609430836598e-08 0 0 0</pose>
+        <mass>0.154468183587361</mass>
+        <inertia>
+          <ixx>0.00060097202992856296</ixx>
+          <ixy>2.9850835671569298e-11</ixy>
+          <ixz>-1.0529253645640701e-10</ixz>
+          <iyy>0.00115446021177649</iyy>
+          <iyz>-1.7962147737516299e-11</iyz>
+          <izz>0.00060097233830476405</izz>
+        </inertia>
+      </inertial>
+      <collision name='right_rear_wheel_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_rear_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu>
+              <mu2>0.29999999999999999</mu2>
+              <fdir1>1 0 0</fdir1>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='right_rear_wheel_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_rear_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.81249994 0.81249994 0.81249994 1</diffuse>
+          <ambient>0.81249994 0.81249994 0.81249994 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rr_arm_rev' type='revolute'>
+      <pose relative_to='base_footprint'>0.001 -0.025000000000000001 0.499 1.5708 -4.2351647362715017e-22 -3.1415853071795872</pose>
+      <parent>base_footprint</parent>
+      <child>right_rear_arm</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>1.5708</upper>
+          <effort>14</effort>
+          <velocity>0.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>3</damping>
+          <friction>3</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='right_rear_arm'>
+      <pose relative_to='rr_arm_rev'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>-0.072133000000000003 0.027001000000000001 -0.15159300000000001 0 0 0</pose>
+        <mass>0.123064431731573</mass>
+        <inertia>
+          <ixx>0.00013574161297281399</ixx>
+          <ixy>6.1364462259140804e-06</ixy>
+          <ixz>-3.9194932827752498e-06</ixz>
+          <iyy>6.7603604872994502e-05</iyy>
+          <iyz>4.4890603262993601e-05</iyz>
+          <izz>0.000106939767969889</izz>
+        </inertia>
+      </inertial>
+      <visual name='right_rear_arm_visual'>
+        <pose>0 -0.022488000000000001 -0.17599300000000001 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://drobot_description/meshes/right_rear_arm.STL</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1 0.400000006 0.199999988 1</diffuse>
+          <ambient>1 0.400000006 0.199999988 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <!-- DROBOT: MC 로터 (x500 파라미터 기반, 위치는 에어프레임 CA_ROTOR 매칭) -->
+    <!-- rotor_0: front-right (NED PY=+0.22), CCW -->
+    <link name="rotor_0">
+      <pose relative_to='base_footprint'>0.13 -0.22 0.55 0 0 0</pose>
+      <inertial>
+        <mass>0.016</mass>
+        <inertia>
+          <ixx>3.85e-07</ixx><iyy>2.61e-05</iyy><izz>2.65e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="rotor_0_visual">
+        <geometry><cylinder><radius>0.14</radius><length>0.005</length></cylinder></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse><ambient>0.2 0.2 0.2 1</ambient></material>
+      </visual>
+    </link>
+    <joint name="rotor_0_joint" type="revolute">
+      <parent>base_footprint</parent>
+      <child>rotor_0</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <!-- rotor_1: rear-left (NED PY=-0.20), CCW -->
+    <link name="rotor_1">
+      <pose relative_to='base_footprint'>-0.13 0.20 0.55 0 0 0</pose>
+      <inertial>
+        <mass>0.016</mass>
+        <inertia>
+          <ixx>3.85e-07</ixx><iyy>2.61e-05</iyy><izz>2.65e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="rotor_1_visual">
+        <geometry><cylinder><radius>0.14</radius><length>0.005</length></cylinder></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse><ambient>0.2 0.2 0.2 1</ambient></material>
+      </visual>
+    </link>
+    <joint name="rotor_1_joint" type="revolute">
+      <parent>base_footprint</parent>
+      <child>rotor_1</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <!-- rotor_2: front-left (NED PY=-0.22), CW -->
+    <link name="rotor_2">
+      <pose relative_to='base_footprint'>0.13 0.22 0.55 0 0 0</pose>
+      <inertial>
+        <mass>0.016</mass>
+        <inertia>
+          <ixx>3.85e-07</ixx><iyy>2.61e-05</iyy><izz>2.65e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="rotor_2_visual">
+        <geometry><cylinder><radius>0.14</radius><length>0.005</length></cylinder></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse><ambient>0.2 0.2 0.2 1</ambient></material>
+      </visual>
+    </link>
+    <joint name="rotor_2_joint" type="revolute">
+      <parent>base_footprint</parent>
+      <child>rotor_2</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <!-- rotor_3: rear-right (NED PY=+0.20), CW -->
+    <link name="rotor_3">
+      <pose relative_to='base_footprint'>-0.13 -0.20 0.55 0 0 0</pose>
+      <inertial>
+        <mass>0.016</mass>
+        <inertia>
+          <ixx>3.85e-07</ixx><iyy>2.61e-05</iyy><izz>2.65e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="rotor_3_visual">
+        <geometry><cylinder><radius>0.14</radius><length>0.005</length></cylinder></geometry>
+        <material><diffuse>0.2 0.2 0.2 1</diffuse><ambient>0.2 0.2 0.2 1</ambient></material>
+      </visual>
+    </link>
+    <joint name="rotor_3_joint" type="revolute">
+      <parent>base_footprint</parent>
+      <child>rotor_3</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <self_collide>false</self_collide>
+    <plugin name='gz::sim::systems::JointStatePublisher' filename='gz-sim-joint-state-publisher-system'>
+      <topic>/joint_states</topic>
+    </plugin>
+    <!-- DROBOT: PX4 호환 휠 제어 (actuator_motors[4]=왼쪽, [5]=오른쪽) -->
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>lf_wheel_con</joint_name>
+      <sub_topic>command/motor_speed</sub_topic>
+      <control_type>velocity</control_type>
+      <use_actuator_msg>true</use_actuator_msg>
+      <actuator_number>4</actuator_number>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>lr_wheel_con</joint_name>
+      <sub_topic>command/motor_speed</sub_topic>
+      <control_type>velocity</control_type>
+      <use_actuator_msg>true</use_actuator_msg>
+      <actuator_number>4</actuator_number>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>rf_wheel_con</joint_name>
+      <sub_topic>command/motor_speed</sub_topic>
+      <control_type>velocity</control_type>
+      <use_actuator_msg>true</use_actuator_msg>
+      <actuator_number>5</actuator_number>
+    </plugin>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>rr_wheel_con</joint_name>
+      <sub_topic>command/motor_speed</sub_topic>
+      <control_type>velocity</control_type>
+      <use_actuator_msg>true</use_actuator_msg>
+      <actuator_number>5</actuator_number>
+    </plugin>
+    <plugin name='gz::sim::systems::JointPositionController' filename='gz-sim-joint-position-controller-system'>
+      <joint_name>lf_arm_rev</joint_name>
+      <topic>/model/drobot/joint/lf_arm_rev/cmd_pos</topic>
+      <p_gain>20.0</p_gain>
+      <i_gain>1.0</i_gain>
+      <d_gain>2.0</d_gain>
+      <i_max>5.0</i_max>
+      <i_min>-5.0</i_min>
+      <cmd_max>14.0</cmd_max>
+      <cmd_min>-14.0</cmd_min>
+    </plugin>
+    <plugin name='gz::sim::systems::JointPositionController' filename='gz-sim-joint-position-controller-system'>
+      <joint_name>lr_arm_rev</joint_name>
+      <topic>/model/drobot/joint/lr_arm_rev/cmd_pos</topic>
+      <p_gain>20.0</p_gain>
+      <i_gain>1.0</i_gain>
+      <d_gain>2.0</d_gain>
+      <i_max>5.0</i_max>
+      <i_min>-5.0</i_min>
+      <cmd_max>14.0</cmd_max>
+      <cmd_min>-14.0</cmd_min>
+    </plugin>
+    <plugin name='gz::sim::systems::JointPositionController' filename='gz-sim-joint-position-controller-system'>
+      <joint_name>rf_arm_rev</joint_name>
+      <topic>/model/drobot/joint/rf_arm_rev/cmd_pos</topic>
+      <p_gain>20.0</p_gain>
+      <i_gain>1.0</i_gain>
+      <d_gain>2.0</d_gain>
+      <i_max>5.0</i_max>
+      <i_min>-5.0</i_min>
+      <cmd_max>14.0</cmd_max>
+      <cmd_min>-14.0</cmd_min>
+    </plugin>
+    <plugin name='gz::sim::systems::JointPositionController' filename='gz-sim-joint-position-controller-system'>
+      <joint_name>rr_arm_rev</joint_name>
+      <topic>/model/drobot/joint/rr_arm_rev/cmd_pos</topic>
+      <p_gain>20.0</p_gain>
+      <i_gain>1.0</i_gain>
+      <d_gain>2.0</d_gain>
+      <i_max>5.0</i_max>
+      <i_min>-5.0</i_min>
+      <cmd_max>14.0</cmd_max>
+      <cmd_min>-14.0</cmd_min>
+    </plugin>
+    <!-- DROBOT: MC 모터 플러그인 (x500 파라미터) -->
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_0_joint</jointName>
+      <linkName>rotor_0</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1000.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>0</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_1_joint</jointName>
+      <linkName>rotor_1</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1000.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>1</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_2_joint</jointName>
+      <linkName>rotor_2</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1000.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>2</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_3_joint</jointName>
+      <linkName>rotor_3</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1000.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>3</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+    <frame name='camera_joint' attached_to='base_link'>
+      <pose>0.010101000000000001 -0.027788 0.35999999999999999 0 0 0</pose>
+    </frame>
+    <frame name='camera' attached_to='camera_joint'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='imu_joint' attached_to='base_link'>
+      <pose>0 0 0.01 0 0 0</pose>
+    </frame>
+    <frame name='imu_link' attached_to='imu_joint'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='lidar_joint' attached_to='base_link'>
+      <pose>0.010101000000000001 -0.027788 0.30153999999999997 -3.1415853071795872 0 -3.1415853071795872</pose>
+    </frame>
+    <frame name='lidar' attached_to='lidar_joint'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_footprint_joint' attached_to='base_footprint'>
+      <pose>0 0 0.25 0 0 0</pose>
+    </frame>
+    <frame name='base_link' attached_to='base_footprint_joint'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='left_sf_fix' attached_to='left_front_arm'>
+      <pose>0.00050000000000000001 -0.00079799999999999999 -0.217469 0.010035000000000001 0 0</pose>
+    </frame>
+    <frame name='left_side_frame' attached_to='left_sf_fix'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='right_sf_fix' attached_to='right_front_arm'>
+      <pose>0.00050000000000000001 0.165912 -0.13141700000000001 1.5947 0 0</pose>
+    </frame>
+    <frame name='right_side_frame' attached_to='right_sf_fix'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+  </model>
+</sdf>
