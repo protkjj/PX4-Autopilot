@@ -118,6 +118,7 @@ void VtolType::update_fw_state()
 	_mc_pitch_weight = 0.0f;
 	_mc_yaw_weight = 0.0f;
 
+	/* tecs, qudadchute 관련 코드 제거
 	// tecs didn't publish an update yet after the transition
 	if (_tecs_status->timestamp < _trans_finished_ts) {
 		_tecs_running = false;
@@ -145,8 +146,7 @@ void VtolType::update_fw_state()
 			blendThrottleAfterFrontTransition(progress);
 		}
 	}
-
-	check_quadchute_condition();
+	check_quadchute_condition(); */
 }
 
 void VtolType::update_transition_state()
@@ -171,25 +171,10 @@ bool VtolType::isFrontTransitionCompleted()
 	return ret || can_transition_on_ground();
 }
 
-bool VtolType::isFrontTransitionCompletedBase()
+bool VtolType::isFrontTransitionCompletedBase() // transition 과정 drobot customize
 {
-	// continue the transition to fw mode while monitoring airspeed for a final switch to fw mode
-	const bool airspeed_triggers_transition = PX4_ISFINITE(_attc->get_calibrated_airspeed());
-	const bool minimum_trans_time_elapsed = _time_since_trans_start > getMinimumFrontTransitionTime();
-	const bool openloop_trans_time_elapsed = _time_since_trans_start > getOpenLoopFrontTransitionTime();
-
-	bool transition_to_fw = false;
-
-	if (airspeed_triggers_transition) {
-		transition_to_fw = minimum_trans_time_elapsed
-				   && _attc->get_calibrated_airspeed() >= getTransitionAirspeed();
-
-	} else {
-		transition_to_fw = openloop_trans_time_elapsed;
-	}
-
-	return transition_to_fw;
-
+	// DROBOT: 시간 기반 전환 완료 (에어스피드 불필요)
+	return _time_since_trans_start > getOpenLoopFrontTransitionTime();
 }
 
 bool VtolType::can_transition_on_ground()

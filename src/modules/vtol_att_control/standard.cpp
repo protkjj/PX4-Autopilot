@@ -96,21 +96,11 @@ void Standard::update_vtol_state()
 			_pusher_throttle = 0.0f;
 
 		} else if (_vtol_mode == vtol_mode::TRANSITION_TO_MC) {
-			// speed exit condition: use ground if valid, otherwise airspeed
-			bool exit_backtransition_speed_condition = false;
+			// DROBOT: 정지 확인 + 변환 시간 경과로 변경
+			const bool exit_backtransition_time_condition =
+				_time_since_trans_start > _param_vt_b_trans_dur.get();
 
-			if (_local_pos->v_xy_valid) {
-				const Dcmf R_to_body(Quatf(_v_att->q).inversed());
-				const Vector3f vel = R_to_body * Vector3f(_local_pos->vx, _local_pos->vy, _local_pos->vz);
-				exit_backtransition_speed_condition = vel(0) < _param_mpc_xy_cruise.get();
-
-			} else if (PX4_ISFINITE(_attc->get_calibrated_airspeed())) {
-				exit_backtransition_speed_condition = _attc->get_calibrated_airspeed() < _param_mpc_xy_cruise.get();
-			}
-
-			const bool exit_backtransition_time_condition = _time_since_trans_start > _param_vt_b_trans_dur.get();
-
-			if (can_transition_on_ground() || exit_backtransition_speed_condition || exit_backtransition_time_condition) {
+			if (can_transition_on_ground() || exit_backtransition_time_condition) {
 				_vtol_mode = vtol_mode::MC_MODE;
 			}
 		}
@@ -324,6 +314,7 @@ void Standard::fill_actuator_outputs()
 		_torque_setpoint_0->xyz[2] = _vehicle_torque_setpoint_virtual_mc->xyz[2];
 		_thrust_setpoint_0->xyz[2] = _vehicle_thrust_setpoint_virtual_mc->xyz[2];
 
+		/*
 		// FW actuators:
 		if (!_param_vt_elev_mc_lock.get()) {
 			_torque_setpoint_1->xyz[0] = _vehicle_torque_setpoint_virtual_fw->xyz[0];
@@ -331,6 +322,7 @@ void Standard::fill_actuator_outputs()
 		}
 
 		_thrust_setpoint_0->xyz[0] = _pusher_throttle;
+		*/
 		break;
 
 	case vtol_mode::TRANSITION_TO_FW:
@@ -354,10 +346,10 @@ void Standard::fill_actuator_outputs()
 	case vtol_mode::FW_MODE:
 
 		// FW actuators
-		_torque_setpoint_1->xyz[0] = _vehicle_torque_setpoint_virtual_fw->xyz[0];
-		_torque_setpoint_1->xyz[1] = _vehicle_torque_setpoint_virtual_fw->xyz[1];
-		_torque_setpoint_1->xyz[2] = _vehicle_torque_setpoint_virtual_fw->xyz[2];
-		_thrust_setpoint_0->xyz[0] = _vehicle_thrust_setpoint_virtual_fw->xyz[0];
+		_torque_setpoint_1->xyz[0] = 0.f;  // roll 불필요
+		_torque_setpoint_1->xyz[1] = 0.f; // pitch 불필요
+		_torque_setpoint_1->xyz[2] = _vehicle_torque_setpoint_virtual_fw->xyz[2]; // yaw 조향
+		_thrust_setpoint_0->xyz[0] = _vehicle_thrust_setpoint_virtual_fw->xyz[0]; // thrust -> 휠 전진
 		break;
 	}
 }

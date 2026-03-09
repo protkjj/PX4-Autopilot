@@ -467,7 +467,7 @@ VtolAttitudeControl::Run()
 			_prev_published_vtol_vehicle_status = _vtol_vehicle_status;
 		}
 
-		// Publish flaps/spoiler setpoint with configured deflection in Hover if in Auto.
+		/*// Publish flaps/spoiler setpoint with configured deflection in Hover if in Auto.
 		// In Manual always published in FW rate controller, and in Auto FW in FW Position Controller.
 		if (_vehicle_control_mode.flag_control_auto_enabled
 		    && _vtol_vehicle_status.vehicle_vtol_state != vtol_vehicle_status_s::VEHICLE_VTOL_STATE_FW) {
@@ -490,7 +490,7 @@ VtolAttitudeControl::Run()
 			spoiler_setpoint.normalized_setpoint = spoiler_control;
 			spoiler_setpoint.timestamp = hrt_absolute_time();
 			_spoilers_setpoint_pub.publish(spoiler_setpoint);
-		}
+		}*/
 	}
 
 	perf_end(_loop_perf);
