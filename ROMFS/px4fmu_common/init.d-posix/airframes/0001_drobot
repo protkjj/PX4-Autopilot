@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# @name Drobot Hybrid
+# @type VTOL
+# @class Standard VTOL
+#
+
+# 기본 설정 로드 (VTOL 기반으로 변경하여 전환 로직 활성화)
+. ${R}etc/init.d/rc.vtol_defaults
+
+# 시뮬레이션 설정
+PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
+PX4_GZ_WORLD=${PX4_GZ_WORLD:=default}
+PX4_SIM_MODEL=${PX4_SIM_MODEL:=x500} # 실제로는 암 관절이 정의된 커스텀 SDF 필요
+
+param set-default SIM_GZ_EN 1
+
+param set-default CA_AIRFRAME 2              # VTOL 제어 할당 타입
+
+# 모터 구성
+param set-default CA_ROTOR_COUNT 6    # MAIN 1~4: 드론 모터, AUX 1~2 : 휠 모터
+param set-default CA_SV_CS_COUNT 4    # AUX 3~6: 서보(2), 선형 액추에이터(2)
+
+# 드론 모터 기하학적 배치 (무게중심으로부터의 각 축 방향으로의 거리, 직접 측정 후 기입해야 함)
+param set-default CA_ROTOR0_PX 0.13    # PX: 무게중심으로부터 x축 방향 거리
+param set-default CA_ROTOR0_PY 0.22    # PY: 무게중심으로부터 y축 방향 거리
+param set-default CA_ROTOR0_KM 0.05    # KM: 모멘트 계수 (양수는 반시계방향, 음수는 시계방향 회전, 값은 일반적으로 0.05)
+param set-default CA_ROTOR0_AX 0.00    # x축 방향으로 추력을 내도록 하는 연산 무시 (비행용)
+param set-default CA_ROTOR0_AZ 1.00    # z축 방향으로 추력을 내도록 하는 연산만 따르도록 (비행용)
+
+param set-default CA_ROTOR1_PX -0.13
+param set-default CA_ROTOR1_PY -0.20
+param set-default CA_ROTOR1_KM 0.05
+param set-default CA_ROTOR1_AX 0.00
+param set-default CA_ROTOR1_AZ 1.00
+
+param set-default CA_ROTOR2_PX 0.13
+param set-default CA_ROTOR2_PY -0.22
+param set-default CA_ROTOR2_KM -0.05
+param set-default CA_ROTOR2_AX 0.00
+param set-default CA_ROTOR2_AZ 1.00
+
+param set-default CA_ROTOR3_PX -0.13
+param set-default CA_ROTOR3_PY 0.20
+param set-default CA_ROTOR3_KM -0.05
+param set-default CA_ROTOR3_AX 0.00
+param set-default CA_ROTOR3_AZ 1.00
+
+
+# 로버 휠 모터 기하학적 배치 (무게중심으로부터의 각 축 방향으로의 거리, 직접 측정 후 기입해야 함)
+param set-default CA_ROTOR4_PX 0.13
+param set-default CA_ROTOR4_PY -0.20     # 왼쪽 바퀴
+param set-default CA_ROTOR4_AX 1.00      # x축 방향으로 추력을 내도록 하는 연산만 따르도록 (주행용)
+param set-default CA_ROTOR4_AZ 0.00      # z축 방향으로 추력을 내도록 하는 연산 무시 (주행용)
+
+param set-default CA_ROTOR5_PX 0.13
+param set-default CA_ROTOR5_PY 0.20     # 오른쪽 바퀴
+param set-default CA_ROTOR5_AX 1.00
+param set-default CA_ROTOR5_AZ 0.00
+
+
+# 서보 및 액추에이터 할당
+# SV0, SV1: 드론 암 관절 서보 (접기/펴기)
+param set-default CA_SV_CS0_TYPE 12     # 서보모터 타입 지정 (커스텀으로 지정해서 로직 코드에서의 명령을 그대로 수행하도록)
+param set-default CA_SV_CS1_TYPE 12     # 서보모터 타입 지정
+
+# SV2, SV3: 선형 액추에이터 (암 확장/수축)
+param set-default CA_SV_CS2_TYPE 12     # 선형 액추에이터 타입 지정 (커스텀으로 지정해서 로직 코드에서의 명령을 그대로 수행하도록)
+param set-default CA_SV_CS3_TYPE 12     # 선형 액추에이터 타입 지정
+
+
+# VTOL 전환(Transition) 파라미터 (로버 변신 로직)
+param set-default VT_TYPE 2           # Standard VTOL 타입 지정
+param set-default VT_TRANS_TIMEOUT 5  # 암이 완전히 펴지거나 접히는 시간(초)
+param set-default VT_ARSP_TRANS 0     # 대기속도 센서 미사용 (0으로 고정)
+param set-default VT_B_TRANS_DUR 3    # 모드 전환 시 블렌딩 시간
+
+
+# 시뮬레이션 매핑 (Gazebo와 연동)
+param set-default SIM_GZ_EC_FUNC1 101
+param set-default SIM_GZ_EC_FUNC2 102
+param set-default SIM_GZ_EC_FUNC3 103
+param set-default SIM_GZ_EC_FUNC4 104
+
+param set-default SIM_GZ_EC_FUNC5 105
+param set-default SIM_GZ_EC_FUNC6 106
+
+param set-default SIM_GZ_SV_FUNC1 201
+param set-default SIM_GZ_SV_FUNC2 202
+param set-default SIM_GZ_SV_FUNC3 203
+param set-default SIM_GZ_SV_FUNC4 204
