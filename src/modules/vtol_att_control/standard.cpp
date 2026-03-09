@@ -158,104 +158,51 @@ void Standard::update_vtol_state()
 
 void Standard::update_transition_state()
 {
-	const hrt_abstime now = hrt_absolute_time();
-	float mc_weight = 1.0f;
+	// DROBOT: 단계별 전환 로직
+	// MC→로버: 드론정지(즉시) → 서보 팔접기(5s) → 리니어(5s) → 휠 활성화
+	// 로버→MC: 휠정지(즉시) → 리니어 역방향(5s) → 서보 팔펴기(5s) → 드론 활성화
+	static constexpr float SERVO_DURATION = 5.0f;
+	static constexpr float LINEAR_DURATION = 5.0f;
+	static constexpr float TOTAL_TRANSITION_TIME = SERVO_DURATION + LINEAR_DURATION; // 10s
 
 	VtolType::update_transition_state();
 
-	// we get attitude setpoint from a multirotor flighttask if climbrate is controlled.
-	// in any other case the fixed wing attitude controller publishes attitude setpoint from manual stick input.
-	if (_v_control_mode->flag_control_climb_rate_enabled) {
-		// we need the incoming (virtual) attitude setpoints (both mc and fw) to be recent, otherwise return (means the previous setpoint stays active)
-		if (_mc_virtual_att_sp->timestamp < (now - 1_s) || _fw_virtual_att_sp->timestamp < (now - 1_s)) {
-			return;
-		}
-
-		*_v_att_sp = *_mc_virtual_att_sp;
-
-	} else {
-		// we need a recent incoming (fw virtual) attitude setpoint, otherwise return (means the previous setpoint stays active)
-		if (_fw_virtual_att_sp->timestamp < (now - 1_s)) {
-			return;
-		}
-
-		*_v_att_sp = *_fw_virtual_att_sp;
-		_v_att_sp->thrust_body[2] = -_fw_virtual_att_sp->thrust_body[0];
-	}
-
-
-	const Eulerf attitude_setpoint_euler(Quatf(_v_att_sp->q_d));
-	float roll_body = attitude_setpoint_euler.phi();
-	float pitch_body = attitude_setpoint_euler.theta();
-	float yaw_body = attitude_setpoint_euler.psi();
+	float mc_weight = 0.0f;
 
 	if (_vtol_mode == vtol_mode::TRANSITION_TO_FW) {
+		// MC→로버: 드론 모터 즉시 정지, 서보/리니어 순차 동작
+		mc_weight = 0.0f;
+		_pusher_throttle = 0.0f;
 
-		if (_v_control_mode->flag_control_climb_rate_enabled) {
-			roll_body = Eulerf(Quatf(_fw_virtual_att_sp->q_d)).phi();
+		if (_time_since_trans_start < SERVO_DURATION) {
+			// Phase 1: 서보 팔 접기 (0~5s)
+			// TODO: 서보 위치 명령 발행 (CA_SV_CS0, CS1)
+
+		} else if (_time_since_trans_start < TOTAL_TRANSITION_TIME) {
+			// Phase 2: 리니어 액추에이터 (5~10s)
+			// TODO: 리니어 위치 명령 발행 (CA_SV_CS2, CS3)
 		}
-
-		if (_param_vt_psher_slew.get() <= FLT_EPSILON) {
-			// just set the final target throttle value
-			_pusher_throttle = _param_vt_f_trans_thr.get();
-
-		} else if (_pusher_throttle <= _param_vt_f_trans_thr.get()) {
-			// ramp up throttle to the target throttle value
-			const float dt = math::min((now - _last_time_pusher_transition_update) / 1e6f, 0.05f);
-			_pusher_throttle = math::min(_pusher_throttle +
-						     _param_vt_psher_slew.get() * dt, _param_vt_f_trans_thr.get());
-
-			_last_time_pusher_transition_update = now;
-		}
-
-		_airspeed_trans_blend_margin = getTransitionAirspeed() - getBlendAirspeed();
-
-		// do blending of mc and fw controls if a blending airspeed has been provided and the minimum transition time has passed
-		if (_airspeed_trans_blend_margin > 0.0f &&
-		    PX4_ISFINITE(_attc->get_calibrated_airspeed()) &&
-		    _attc->get_calibrated_airspeed() > 0.0f &&
-		    _attc->get_calibrated_airspeed() >= getBlendAirspeed() &&
-		    _time_since_trans_start > getMinimumFrontTransitionTime()) {
-
-			mc_weight = 1.0f - fabsf(_attc->get_calibrated_airspeed() - getBlendAirspeed()) /
-				    _airspeed_trans_blend_margin;
-			// time based blending when no airspeed sensor is set
-
-		} else if (!PX4_ISFINITE(_attc->get_calibrated_airspeed())) {
-			mc_weight = 1.0f - _time_since_trans_start / getMinimumFrontTransitionTime();
-			mc_weight = math::constrain(2.0f * mc_weight, 0.0f, 1.0f);
-		}
-
-		// ramp up FW_PSP_OFF
-		pitch_body = math::radians(_param_fw_psp_off.get()) * (1.0f - mc_weight);
-		_v_att_sp->thrust_body[0] = _pusher_throttle;
-		const Quatf q_sp(Eulerf(roll_body, pitch_body, yaw_body));
-		q_sp.copyTo(_v_att_sp->q_d);
-		mc_weight = math::constrain(mc_weight, 0.0f, 1.0f);
+		// Phase 3: 10s 경과 → isFrontTransitionCompletedBase()에서 FW_MODE 전환
 
 	} else if (_vtol_mode == vtol_mode::TRANSITION_TO_MC) {
+		// 로버→MC: 휠 즉시 정지, 리니어/서보 순차 동작
+		_wheel_left = 0.0f;
+		_wheel_right = 0.0f;
 
-		// continually increase mc attitude control as we transition back to mc mode
-		if (_param_vt_b_trans_ramp.get() > FLT_EPSILON) {
-			mc_weight = _time_since_trans_start / _param_vt_b_trans_ramp.get();
+		if (_time_since_trans_start < LINEAR_DURATION) {
+			// Phase 1: 리니어 역방향 (0~5s)
+			// TODO: 리니어 위치 명령 발행 (CA_SV_CS2, CS3)
+			mc_weight = 0.0f;
+
+		} else if (_time_since_trans_start < TOTAL_TRANSITION_TIME) {
+			// Phase 2: 서보 팔 펴기 (5~10s)
+			// TODO: 서보 위치 명령 발행 (CA_SV_CS0, CS1)
+			mc_weight = 0.0f;
+
+		} else {
+			// Phase 3: 전환 완료 직전, MC 가중치 올림
+			mc_weight = 1.0f;
 		}
-
-		mc_weight = math::constrain(mc_weight, 0.0f, 1.0f);
-
-		if (_v_control_mode->flag_control_climb_rate_enabled) {
-			// control backtransition deceleration using pitch.
-			pitch_body = Eulerf(Quatf(_mc_virtual_att_sp->q_d)).theta();
-
-			// blend roll setpoint between FW and MC
-			const float roll_body_fw = Eulerf(Quatf(_fw_virtual_att_sp->q_d)).phi();
-			roll_body = mc_weight * roll_body + (1.0f - mc_weight) * roll_body_fw;
-		}
-
-		const Quatf q_sp(Eulerf(roll_body, pitch_body, yaw_body));
-
-		q_sp.copyTo(_v_att_sp->q_d);
-
-		_pusher_throttle = 0.0f;
 	}
 
 	_mc_roll_weight = mc_weight;
@@ -343,21 +290,14 @@ void Standard::fill_actuator_outputs()
 		break;
 
 	case vtol_mode::TRANSITION_TO_FW:
-
 	// FALLTHROUGH
 	case vtol_mode::TRANSITION_TO_MC:
-		// MC actuators:
+		// DROBOT: 전환 중 MC 모터는 가중치 적용, 휠/FW 출력 전부 0
 		_torque_setpoint_0->xyz[0] = _vehicle_torque_setpoint_virtual_mc->xyz[0] * _mc_roll_weight;
 		_torque_setpoint_0->xyz[1] = _vehicle_torque_setpoint_virtual_mc->xyz[1] * _mc_pitch_weight;
 		_torque_setpoint_0->xyz[2] = _vehicle_torque_setpoint_virtual_mc->xyz[2] * _mc_yaw_weight;
 		_thrust_setpoint_0->xyz[2] = _vehicle_thrust_setpoint_virtual_mc->xyz[2] * _mc_throttle_weight;
-
-		// FW actuators
-		_torque_setpoint_1->xyz[0] = _vehicle_torque_setpoint_virtual_fw->xyz[0];
-		_torque_setpoint_1->xyz[1] = _vehicle_torque_setpoint_virtual_fw->xyz[1];
-		_torque_setpoint_1->xyz[2] = _vehicle_torque_setpoint_virtual_fw->xyz[2];
-		_thrust_setpoint_0->xyz[0] = _pusher_throttle;
-
+		// FW/휠 출력 없음 (초기값 0 유지)
 		break;
 
 	case vtol_mode::FW_MODE:

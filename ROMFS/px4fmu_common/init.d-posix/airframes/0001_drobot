@@ -71,9 +71,10 @@ param set-default CA_SV_CS3_TYPE 12     # 선형 액추에이터 타입 지정
 
 # VTOL 전환(Transition) 파라미터 (로버 변신 로직)
 param set-default VT_TYPE 2           # Standard VTOL 타입 지정
-param set-default VT_TRANS_TIMEOUT 5  # 암이 완전히 펴지거나 접히는 시간(초)
-param set-default VT_ARSP_TRANS 0     # 대기속도 센서 미사용 (0으로 고정)
-param set-default VT_B_TRANS_DUR 3    # 모드 전환 시 블렌딩 시간
+param set-default VT_F_TR_OL_TM 10   # MC→로버 전환 시간 (서보5s + 리니어5s)
+param set-default VT_B_TRANS_DUR 10   # 로버→MC 전환 시간 (리니어5s + 서보5s)
+param set-default VT_TRANS_TIMEOUT 20 # 전환 타임아웃 (전환시간 + 여유 10s)
+param set-default VT_ARSP_TRANS 0     # 대기속도 센서 미사용
 
 
 # 시뮬레이션 매핑 (Gazebo와 연동)
