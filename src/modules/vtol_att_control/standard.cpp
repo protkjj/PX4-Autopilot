@@ -45,6 +45,7 @@
 #include "vtol_att_control_main.h"
 
 #include <float.h>
+#include <uORB/topics/manual_control_setpoint.h>
 
 using namespace matrix;
 
@@ -272,7 +273,23 @@ void Standard::update_mc_state()
 
 void Standard::update_fw_state()
 {
-	VtolType::update_fw_state();
+	// DROBOT: 로버 모드 — FW 컨트롤러(TECS/quadchute) 우회
+	_mc_roll_weight = 0.0f;
+	_mc_pitch_weight = 0.0f;
+	_mc_yaw_weight = 0.0f;
+	_mc_throttle_weight = 0.0f;
+
+	// RC 스틱 → 휠 명령
+	manual_control_setpoint_s manual_sp;
+
+	if (_manual_control_setpoint_sub.update(&manual_sp)) {
+		const float throttle = manual_sp.throttle;  // [-1, 1]
+		const float steering = manual_sp.roll;       // [-1, 1]
+
+		// 역기구학: differential drive
+		_wheel_left  = math::constrain(throttle - steering, -1.f, 1.f);
+		_wheel_right = math::constrain(throttle + steering, -1.f, 1.f);
+	}
 }
 
 /**
@@ -344,12 +361,7 @@ void Standard::fill_actuator_outputs()
 		break;
 
 	case vtol_mode::FW_MODE:
-
-		// FW actuators
-		_torque_setpoint_1->xyz[0] = 0.f;  // roll 불필요
-		_torque_setpoint_1->xyz[1] = 0.f; // pitch 불필요
-		_torque_setpoint_1->xyz[2] = _vehicle_torque_setpoint_virtual_fw->xyz[2]; // yaw 조향
-		_thrust_setpoint_0->xyz[0] = _vehicle_thrust_setpoint_virtual_fw->xyz[0]; // thrust -> 휠 전진
+		// DROBOT: 로버 모드 — MC/FW 출력 전부 0 (휠은 actuator_motors 직접 발행)
 		break;
 	}
 }

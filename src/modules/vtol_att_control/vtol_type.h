@@ -222,6 +222,10 @@ public:
 
 	mode get_mode() {return _common_vtol_mode;}
 
+	// DROBOT: 로버 휠 명령 getter (Standard에서 override)
+	virtual float get_wheel_left() const { return 0.f; }
+	virtual float get_wheel_right() const { return 0.f; }
+
 	/**
 	 * @return Minimum front transition time scaled for air density (if available) [s]
 	*/

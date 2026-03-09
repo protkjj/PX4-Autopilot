@@ -46,6 +46,8 @@
 #ifndef STANDARD_H
 #define STANDARD_H
 #include "vtol_type.h"
+#include <uORB/Subscription.hpp>
+#include <uORB/topics/manual_control_setpoint.h>
 
 class Standard : public VtolType
 {
@@ -63,6 +65,10 @@ public:
 	void waiting_on_tecs() override;
 	void blendThrottleAfterFrontTransition(float scale) override;
 
+	// DROBOT: 로버 휠 명령 getter
+	float get_wheel_left() const override { return _wheel_left; }
+	float get_wheel_right() const override { return _wheel_right; }
+
 private:
 
 	enum class vtol_mode {
@@ -77,6 +83,11 @@ private:
 	float _pusher_throttle{0.0f};
 	float _airspeed_trans_blend_margin{0.0f};
 	hrt_abstime _last_time_pusher_transition_update{0};
+
+	// DROBOT: 로버 휠 명령
+	float _wheel_left{0.f};
+	float _wheel_right{0.f};
+	uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};
 
 	void parameters_update() override;
 

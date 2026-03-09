@@ -451,10 +451,28 @@ VtolAttitudeControl::Run()
 
 		_vtol_type->fill_actuator_outputs();
 
-		_vehicle_thrust_setpoint0_pub.publish(_thrust_setpoint_0);
-		_vehicle_thrust_setpoint1_pub.publish(_thrust_setpoint_1);
-		_vehicle_torque_setpoint0_pub.publish(_torque_setpoint_0);
-		_vehicle_torque_setpoint1_pub.publish(_torque_setpoint_1);
+		if (_vtol_vehicle_status.vehicle_vtol_state == vtol_vehicle_status_s::VEHICLE_VTOL_STATE_FW) {
+			// DROBOT: 로버 모드 — CA 우회, actuator_motors 직접 발행
+			actuator_motors_s motors{};
+			motors.timestamp = hrt_absolute_time();
+
+			for (int i = 0; i < 4; i++) { motors.control[i] = NAN; }  // MC 모터 정지
+
+			motors.control[4] = _vtol_type->get_wheel_left();
+			motors.control[5] = _vtol_type->get_wheel_right();
+
+			for (int i = 6; i < actuator_motors_s::NUM_CONTROLS; i++) { motors.control[i] = NAN; }
+
+			motors.reversible_flags = 0b110000;  // 모터 4,5 양방향
+			_actuator_motors_pub.publish(motors);
+
+		} else {
+			// MC/전환 모드: 기존 경로 (CA 사용)
+			_vehicle_thrust_setpoint0_pub.publish(_thrust_setpoint_0);
+			_vehicle_thrust_setpoint1_pub.publish(_thrust_setpoint_1);
+			_vehicle_torque_setpoint0_pub.publish(_torque_setpoint_0);
+			_vehicle_torque_setpoint1_pub.publish(_torque_setpoint_1);
+		}
 
 		// Advertise/publish vtol vehicle status -- immediately if changed, otherwise at 1 Hz
 		const bool vtol_vehicle_status_changed =
