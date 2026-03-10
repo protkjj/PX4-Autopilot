@@ -62,15 +62,11 @@ param set-default CA_ROTOR5_AZ 0.00
 # 서보 및 액추에이터 할당
 # SV0, SV1: 드론 암 관절 서보 (접기/펴기) — FW roll torque로 제어
 param set-default CA_SV_CS0_TYPE 12     # 커스텀 타입
-param set-default CA_SV_CS0_TRQ_R 1.0   # roll torque → 서보 위치 매핑
 param set-default CA_SV_CS1_TYPE 12
-param set-default CA_SV_CS1_TRQ_R 1.0
 
 # SV2, SV3: 선형 액추에이터 (암 확장/수축) — FW pitch torque로 제어
 param set-default CA_SV_CS2_TYPE 12     # 커스텀 타입
-param set-default CA_SV_CS2_TRQ_P 1.0   # pitch torque → 리니어 위치 매핑
 param set-default CA_SV_CS3_TYPE 12
-param set-default CA_SV_CS3_TRQ_P 1.0
 
 
 # VTOL 전환(Transition) 파라미터 (로버 변신 로직)
