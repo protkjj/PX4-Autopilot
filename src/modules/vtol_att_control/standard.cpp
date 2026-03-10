@@ -171,8 +171,6 @@ void Standard::update_transition_state()
 
 	float mc_weight = 0.0f;
 
-	const float WHEEL_RAMP = _param_vt_d_whl_ramp.get();
-
 	if (_vtol_mode == vtol_mode::TRANSITION_TO_FW) {
 		// MC→로버: 정지대기 → 서보 팔접기 → 리니어 확장 → 휠 ramp up
 		mc_weight = 0.0f;
