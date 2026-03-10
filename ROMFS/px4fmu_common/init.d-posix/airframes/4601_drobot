@@ -80,6 +80,10 @@ param set-default VT_B_TRANS_DUR 10   # 로버→MC 전환 시간 (리니어5s +
 param set-default VT_TRANS_TIMEOUT 20 # 전환 타임아웃 (전환시간 + 여유 10s)
 param set-default VT_ARSP_TRANS 0     # 대기속도 센서 미사용
 
+# DROBOT: 에어스피드 센서 없음
+param set-default FW_USE_AIRSPD 0
+param set-default SYS_HAS_NUM_ASPD 0
+param set-default CBRK_SUPPLY_CHK 894281
 
 # 시뮬레이션 매핑 (Gazebo와 연동)
 param set-default SIM_GZ_EC_FUNC1 101
