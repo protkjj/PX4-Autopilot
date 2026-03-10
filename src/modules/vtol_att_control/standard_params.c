@@ -105,3 +105,46 @@ PARAM_DEFINE_FLOAT(VT_B_TRANS_RAMP, 3.0f);
  * @group VTOL Attitude Control
  */
 PARAM_DEFINE_FLOAT(VT_PSHER_SLEW, 0.33f);
+
+/**
+ * DROBOT settle time before transition
+ *
+ * Time to wait after stopping motors before starting
+ * the mechanical transition (servo/linear actuators).
+ *
+ * @unit s
+ * @min 0.0
+ * @max 10.0
+ * @increment 0.1
+ * @decimal 1
+ * @group VTOL Attitude Control
+ */
+PARAM_DEFINE_FLOAT(VT_D_SETTLE_T, 1.0f);
+
+/**
+ * DROBOT servo actuation duration
+ *
+ * Duration for the servo arm fold/unfold during transition.
+ *
+ * @unit s
+ * @min 0.5
+ * @max 30.0
+ * @increment 0.5
+ * @decimal 1
+ * @group VTOL Attitude Control
+ */
+PARAM_DEFINE_FLOAT(VT_D_SERVO_DUR, 5.0f);
+
+/**
+ * DROBOT wheel motor ramp up time
+ *
+ * Duration to ramp up wheel motors after forward transition completes.
+ *
+ * @unit s
+ * @min 0.0
+ * @max 10.0
+ * @increment 0.1
+ * @decimal 1
+ * @group VTOL Attitude Control
+ */
+PARAM_DEFINE_FLOAT(VT_D_WHL_RAMP, 2.0f);

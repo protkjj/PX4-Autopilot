@@ -97,12 +97,19 @@ private:
 	float _servo_arm_cmd{1.0f};    // 1.0=팔 펴짐(MC), -1.0=팔 접힘(rover)
 	float _linear_act_cmd{-1.0f};  // -1.0=수축(MC), 1.0=확장(rover)
 
+	// DROBOT: 휠 ramp up 추적
+	hrt_abstime _fw_mode_enter_time{0};
+	bool _fw_mode_entered{false};
+
 	void parameters_update() override;
 
 	DEFINE_PARAMETERS_CUSTOM_PARENT(VtolType,
 					(ParamFloat<px4::params::VT_PSHER_SLEW>) _param_vt_psher_slew,
 					(ParamFloat<px4::params::VT_B_TRANS_RAMP>) _param_vt_b_trans_ramp,
-					(ParamFloat<px4::params::FW_PSP_OFF>) _param_fw_psp_off
+					(ParamFloat<px4::params::FW_PSP_OFF>) _param_fw_psp_off,
+					(ParamFloat<px4::params::VT_D_SETTLE_T>) _param_vt_d_settle_t,
+					(ParamFloat<px4::params::VT_D_SERVO_DUR>) _param_vt_d_servo_dur,
+					(ParamFloat<px4::params::VT_D_WHL_RAMP>) _param_vt_d_whl_ramp
 				       )
 };
 #endif

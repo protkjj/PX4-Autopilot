@@ -140,6 +140,7 @@ void Standard::update_vtol_state()
 	switch (_vtol_mode) {
 	case vtol_mode::MC_MODE:
 		_common_vtol_mode = mode::ROTARY_WING;
+		_fw_mode_entered = false; // 휠 ramp up 리셋
 		break;
 
 	case vtol_mode::FW_MODE:
@@ -159,52 +160,60 @@ void Standard::update_vtol_state()
 void Standard::update_transition_state()
 {
 	// DROBOT: 단계별 전환 로직
-	// MC→로버: 드론정지(즉시) → 서보 팔접기(5s) → 리니어(5s) → 휠 활성화
-	// 로버→MC: 휠정지(즉시) → 리니어 역방향(5s) → 서보 팔펴기(5s) → 드론 활성화
-	static constexpr float SERVO_DURATION = 5.0f;
-	static constexpr float LINEAR_DURATION = 5.0f;
-	static constexpr float TOTAL_TRANSITION_TIME = SERVO_DURATION + LINEAR_DURATION; // 10s
+	// MC→로버: 정지대기 → 서보 팔접기 → 리니어 확장 → 휠 ramp up
+	// 로버→MC: 휠정지 → 리니어 수축 → 서보 팔펴기 → 드론 활성화
+	const float SETTLE_TIME = _param_vt_d_settle_t.get();
+	const float SERVO_DURATION = _param_vt_d_servo_dur.get();
+	const float LINEAR_DURATION = SERVO_DURATION; // 리니어도 서보와 동일 기간
+	const float TOTAL_TRANSITION_TIME = SETTLE_TIME + SERVO_DURATION + LINEAR_DURATION;
 
 	VtolType::update_transition_state();
 
 	float mc_weight = 0.0f;
 
+	const float WHEEL_RAMP = _param_vt_d_whl_ramp.get();
+
 	if (_vtol_mode == vtol_mode::TRANSITION_TO_FW) {
-		// MC→로버: 드론 모터 즉시 정지, 서보/리니어 순차 동작
+		// MC→로버: 정지대기 → 서보 팔접기 → 리니어 확장 → 휠 ramp up
 		mc_weight = 0.0f;
 		_pusher_throttle = 0.0f;
 
-		if (_time_since_trans_start < SERVO_DURATION) {
-			// Phase 1: 서보 팔 접기 (0~5s), 1.0→-1.0 램프
-			float progress = _time_since_trans_start / SERVO_DURATION;
+		if (_time_since_trans_start < SETTLE_TIME) {
+			// Phase 0: 정지 대기 — 모터 끄고 안정화
+			_servo_arm_cmd = 1.0f;
+			_linear_act_cmd = -1.0f;
+
+		} else if (_time_since_trans_start < SETTLE_TIME + SERVO_DURATION) {
+			// Phase 1: 서보 팔 접기, 1.0→-1.0 램프
+			float progress = (_time_since_trans_start - SETTLE_TIME) / SERVO_DURATION;
 			_servo_arm_cmd = 1.0f - 2.0f * progress;
-			_linear_act_cmd = -1.0f; // 수축 유지
+			_linear_act_cmd = -1.0f;
 
 		} else if (_time_since_trans_start < TOTAL_TRANSITION_TIME) {
-			// Phase 2: 리니어 확장 (5~10s), -1.0→1.0 램프
-			float progress = (_time_since_trans_start - SERVO_DURATION) / LINEAR_DURATION;
-			_servo_arm_cmd = -1.0f; // 접힌 상태 유지
+			// Phase 2: 리니어 확장, -1.0→1.0 램프
+			float progress = (_time_since_trans_start - SETTLE_TIME - SERVO_DURATION) / LINEAR_DURATION;
+			_servo_arm_cmd = -1.0f;
 			_linear_act_cmd = -1.0f + 2.0f * progress;
 		}
-		// Phase 3: 10s 경과 → isFrontTransitionCompletedBase()에서 FW_MODE 전환
+		// Phase 3: TOTAL_TRANSITION_TIME 경과 → isFrontTransitionCompletedBase()에서 FW_MODE 전환
 
 	} else if (_vtol_mode == vtol_mode::TRANSITION_TO_MC) {
-		// 로버→MC: 휠 즉시 정지, 리니어/서보 순차 동작
+		// 로버→MC: 휠정지 → 리니어 수축 → 서보 팔펴기 → 드론 활성화
 		_wheel_left = 0.0f;
 		_wheel_right = 0.0f;
 
 		if (_time_since_trans_start < LINEAR_DURATION) {
-			// Phase 1: 리니어 수축 (0~5s), 1.0→-1.0 램프
+			// Phase 1: 리니어 수축, 1.0→-1.0 램프
 			float progress = _time_since_trans_start / LINEAR_DURATION;
-			_servo_arm_cmd = -1.0f; // 접힌 상태 유지
+			_servo_arm_cmd = -1.0f;
 			_linear_act_cmd = 1.0f - 2.0f * progress;
 			mc_weight = 0.0f;
 
-		} else if (_time_since_trans_start < TOTAL_TRANSITION_TIME) {
-			// Phase 2: 서보 팔 펴기 (5~10s), -1.0→1.0 램프
+		} else if (_time_since_trans_start < LINEAR_DURATION + SERVO_DURATION) {
+			// Phase 2: 서보 팔 펴기, -1.0→1.0 램프
 			float progress = (_time_since_trans_start - LINEAR_DURATION) / SERVO_DURATION;
 			_servo_arm_cmd = -1.0f + 2.0f * progress;
-			_linear_act_cmd = -1.0f; // 수축 유지
+			_linear_act_cmd = -1.0f;
 			mc_weight = 0.0f;
 
 		} else {
@@ -236,6 +245,12 @@ void Standard::update_fw_state()
 	_mc_yaw_weight = 0.0f;
 	_mc_throttle_weight = 0.0f;
 
+	// 휠 ramp up 타이머 초기화
+	if (!_fw_mode_entered) {
+		_fw_mode_enter_time = hrt_absolute_time();
+		_fw_mode_entered = true;
+	}
+
 	// RC 스틱 → 휠 명령
 	manual_control_setpoint_s manual_sp;
 
@@ -244,8 +259,20 @@ void Standard::update_fw_state()
 		const float steering = manual_sp.roll;       // [-1, 1]
 
 		// 역기구학: differential drive
-		_wheel_left  = math::constrain(throttle - steering, -1.f, 1.f);
-		_wheel_right = math::constrain(throttle + steering, -1.f, 1.f);
+		float raw_left  = math::constrain(throttle - steering, -1.f, 1.f);
+		float raw_right = math::constrain(throttle + steering, -1.f, 1.f);
+
+		// 휠 ramp up 적용
+		const float whl_ramp = _param_vt_d_whl_ramp.get();
+		float ramp_scale = 1.0f;
+
+		if (whl_ramp > 0.f) {
+			float elapsed = (hrt_absolute_time() - _fw_mode_enter_time) * 1e-6f;
+			ramp_scale = math::constrain(elapsed / whl_ramp, 0.f, 1.f);
+		}
+
+		_wheel_left  = raw_left * ramp_scale;
+		_wheel_right = raw_right * ramp_scale;
 	}
 }
 
