@@ -32,7 +32,7 @@
 ############################################################################
 
 px4_add_romfs_files(
-        0001_drobot
+	4601_drobot
 
 	1010_gazebo-classic_iris_opt_flow
 	1010_gazebo-classic_iris_opt_flow.post
