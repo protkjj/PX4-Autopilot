@@ -1,12 +1,13 @@
 #!/bin/sh
 #
 # @name Drobot Hybrid
-# @type VTOL
-# @class Standard VTOL
+# @type Quadrotor
+# @class Quadrotor x
 #
 
-# 기본 설정 로드 (VTOL 기반으로 변경하여 전환 로직 활성화)
-. ${R}etc/init.d/rc.vtol_defaults
+# 기본 설정 로드 (드론 + 로버)
+. ${R}etc/init.d/rc.mc_defaults
+. ${R}etc/init.d/rc.rover_differential_defaults
 
 # 시뮬레이션 설정
 PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
@@ -15,10 +16,10 @@ PX4_SIM_MODEL=${PX4_SIM_MODEL:=drobot}
 
 param set-default SIM_GZ_EN 1
 
-param set-default CA_AIRFRAME 2              # VTOL 제어 할당 타입
+param set-default CA_AIRFRAME 0              # Multicopter 제어 할당 타입
 
 # 모터 구성
-param set-default CA_ROTOR_COUNT 6    # MAIN 1~4: 드론 모터, AUX 1~2 : 휠 모터
+param set-default CA_ROTOR_COUNT 8    # MAIN 1~4: 드론 모터, MAIN 5~8: 휠 모터
 param set-default CA_SV_CS_COUNT 4    # AUX 3~6: 서보(2), 선형 액추에이터(2)
 
 # 드론 모터 기하학적 배치 (무게중심으로부터의 각 축 방향으로의 거리, 직접 측정 후 기입해야 함)
@@ -77,16 +78,7 @@ param set-default CA_SV_CS2_TYPE 12
 param set-default CA_SV_CS3_TYPE 12
 
 
-# VTOL 전환(Transition) 파라미터 (로버 변신 로직)
-param set-default VT_TYPE 2           # Standard VTOL 타입 지정
-param set-default VT_F_TR_OL_TM 10   # MC→로버 전환 시간 (서보5s + 리니어5s)
-param set-default VT_B_TRANS_DUR 10   # 로버→MC 전환 시간 (리니어5s + 서보5s)
-param set-default VT_TRANS_TIMEOUT 20 # 전환 타임아웃 (전환시간 + 여유 10s)
-param set-default VT_ARSP_TRANS 0     # 대기속도 센서 미사용
-
-# DROBOT: 에어스피드 센서 없음
-param set-default FW_USE_AIRSPD 0
-param set-default SYS_HAS_NUM_ASPD 0
+# 시뮬레이션: 전원 체크 바이패스
 param set-default CBRK_SUPPLY_CHK 894281
 
 # 시뮬레이션 매핑 (Gazebo와 연동)
@@ -104,3 +96,11 @@ param set-default SIM_GZ_SV_FUNC1 201
 param set-default SIM_GZ_SV_FUNC2 202
 param set-default SIM_GZ_SV_FUNC3 203
 param set-default SIM_GZ_SV_FUNC4 204
+
+# ===== PWM Timer Rate =====
+# MAIN 1~4: 드론 모터 400Hz
+param set-default PWM_MAIN_TIM0 400
+# MAIN 5~8: 로버 모터 50Hz
+param set-default PWM_MAIN_TIM1 50
+# AUX 1~4: 변신 서보 50Hz
+param set-default PWM_AUX_TIM0 50
