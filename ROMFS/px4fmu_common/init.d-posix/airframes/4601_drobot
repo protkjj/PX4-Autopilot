@@ -30,7 +30,7 @@ param set-default CA_ROTOR0_AX 0.00    # x축 방향으로 추력을 내도록 �
 param set-default CA_ROTOR0_AZ 1.00    # z축 방향으로 추력을 내도록 하는 연산만 따르도록 (비행용)
 
 param set-default CA_ROTOR1_PX -0.13
-param set-default CA_ROTOR1_PY -0.20
+param set-default CA_ROTOR1_PY -0.22
 param set-default CA_ROTOR1_KM 0.05
 param set-default CA_ROTOR1_AX 0.00
 param set-default CA_ROTOR1_AZ 1.00
@@ -42,7 +42,7 @@ param set-default CA_ROTOR2_AX 0.00
 param set-default CA_ROTOR2_AZ 1.00
 
 param set-default CA_ROTOR3_PX -0.13
-param set-default CA_ROTOR3_PY 0.20
+param set-default CA_ROTOR3_PY 0.22
 param set-default CA_ROTOR3_KM -0.05
 param set-default CA_ROTOR3_AX 0.00
 param set-default CA_ROTOR3_AZ 1.00
