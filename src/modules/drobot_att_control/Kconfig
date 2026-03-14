@@ -1,0 +1,3 @@
+menuconfig MODULES_DROBOT_ATT_CONTROL
+    bool "drobot_att_control"
+    default n
