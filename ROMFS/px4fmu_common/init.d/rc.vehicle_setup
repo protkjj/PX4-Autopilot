@@ -60,6 +60,15 @@ then
 fi
 
 #
+# Drobot hybrid setup.
+#
+if [ $VEHICLE_TYPE = drobot ]
+then
+	# Start drobot hybrid apps (mc + rover + state machine).
+	. ${R}etc/init.d/rc.drobot_apps
+fi
+
+#
 # VTOL setup.
 #
 if [ $VEHICLE_TYPE = vtol ]

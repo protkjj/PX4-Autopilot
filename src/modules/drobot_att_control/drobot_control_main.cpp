@@ -45,9 +45,8 @@ private:
         DRONE,
         TRANSITION_TO_ROVER
     } _state{State::ROVER};
-
     hrt_abstime _transition_start{0};
-    const hrt_abstime _transition_delay{2000000}; // $2$초 ($2,000,000 \mu s$)
+    const hrt_abstime _transition_delay{2000000}; // 2초 (2,000,000 us)
 };
 
 bool DrobotControl::init()
@@ -81,13 +80,11 @@ void DrobotControl::Run()
     // 2. 상태 머신 로직
     switch (_state) {
     case State::ROVER:
-        update_vehicle_type(vehicle_status_s::VEHICLE_TYPE_ROVER);
-        set_servos(-1.0f); // 로버 모드 위치 ($0^\circ$)
+        set_servos(-1.0f); // 로버 모드 위치 (0 deg)
         break;
 
     case State::DRONE:
-        update_vehicle_type(vehicle_status_s::VEHICLE_TYPE_ROTARY_WING);
-        set_servos(1.0f); // 드론 모드 위치 ($90^\circ$)
+        set_servos(1.0f); // 드론 모드 위치 (90 deg)
         break;
 
     case State::TRANSITION_TO_DRONE:
@@ -105,6 +102,16 @@ void DrobotControl::Run()
             _state = State::ROVER;
         }
         break;
+    }
+
+    // 3. vehicle_type 발행: 변경 시 + 반영 안 됐으면 재발행
+    uint8_t desired_type = (_state == State::DRONE || _state == State::TRANSITION_TO_DRONE)
+                           ? vehicle_status_s::VEHICLE_TYPE_ROTARY_WING
+                           : vehicle_status_s::VEHICLE_TYPE_ROVER;
+
+    vehicle_status_s status;
+    if (_vstatus_sub.copy(&status) && status.vehicle_type != desired_type) {
+        update_vehicle_type(desired_type);
     }
 }
 

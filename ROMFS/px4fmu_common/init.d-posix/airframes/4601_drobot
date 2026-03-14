@@ -5,9 +5,10 @@
 # @class Quadrotor x
 #
 
-# 기본 설정 로드 (드론 + 로버)
+# 기본 파라미터 로드 (드론 + 로버 defaults만 가져오고, VEHICLE_TYPE은 drobot으로 덮어씀)
 . ${R}etc/init.d/rc.mc_defaults
 . ${R}etc/init.d/rc.rover_differential_defaults
+set VEHICLE_TYPE drobot
 
 # 시뮬레이션 설정
 PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
