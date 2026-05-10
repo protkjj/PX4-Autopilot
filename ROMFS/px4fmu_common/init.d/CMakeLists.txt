@@ -111,6 +111,12 @@ if(CONFIG_MODULES_VTOL_ATT_CONTROL)
 	)
 endif()
 
+if(CONFIG_MODULES_DROBOT_ATT_CONTROL)
+	px4_add_romfs_files(
+		rc.drobot_apps
+	)
+endif()
+
 
 if(CONFIG_MODULES_LOGGER)
 	px4_add_romfs_files(

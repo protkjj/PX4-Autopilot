@@ -9,11 +9,15 @@
 #include <uORB/topics/vehicle_thrust_setpoint.h>
 #include <uORB/topics/vehicle_torque_setpoint.h>
 
-extern "C" __EXPORT int drobot_control_main(int argc, char *argv[]);
+using namespace time_literals;
 
-class DrobotControl : public ModuleBase<DrobotControl>, public px4::ScheduledWorkItem
+extern "C" __EXPORT int drobot_att_control_main(int argc, char *argv[]);
+
+class DrobotControl : public ModuleBase, public px4::ScheduledWorkItem
 {
 public:
+    static Descriptor desc;
+
     DrobotControl() : ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::rate_ctrl) {}
     ~DrobotControl() override = default;
 
@@ -59,7 +63,7 @@ void DrobotControl::Run()
 {
     if (should_exit()) {
         ScheduleClear();
-        exit_and_cleanup();
+        exit_and_cleanup(desc);
         return;
     }
 
@@ -67,10 +71,10 @@ void DrobotControl::Run()
     vehicle_command_s vcmd;
     if (_vcmd_sub.update(&vcmd)) {
         if (vcmd.command == vehicle_command_s::VEHICLE_CMD_CUSTOM_0) {
-            if (vcmd.param1 == 1.0f && _state == State::ROVER) {
+            if (vcmd.param1 > 0.5f && _state == State::ROVER) {
                 _state = State::TRANSITION_TO_DRONE;
                 _transition_start = hrt_absolute_time();
-            } else if (vcmd.param1 == 0.0f && _state == State::DRONE) {
+            } else if (vcmd.param1 < 0.5f && _state == State::DRONE) {
                 _state = State::TRANSITION_TO_ROVER;
                 _transition_start = hrt_absolute_time();
             }
@@ -151,13 +155,30 @@ int DrobotControl::task_spawn(int argc, char *argv[])
 {
     DrobotControl *instance = new DrobotControl();
     if (instance) {
-        _object.alloc(instance);
-        _object.get()->init();
-        return PX4_OK;
+        desc.object.store(instance);
+        desc.task_id = task_id_is_work_queue;
+        if (instance->init()) {
+            return PX4_OK;
+        }
+    } else {
+        PX4_ERR("alloc failed");
     }
+    delete instance;
+    desc.object.store(nullptr);
+    desc.task_id = -1;
     return PX4_ERROR;
 }
 
 int DrobotControl::custom_command(int argc, char *argv[]) { return print_usage("unknown command"); }
 int DrobotControl::print_usage(const char *reason) { return 0; }
-int drobot_control_main(int argc, char *argv[]) { return DrobotControl::main(argc, argv); }
+
+ModuleBase::Descriptor DrobotControl::desc{
+    DrobotControl::task_spawn,
+    DrobotControl::custom_command,
+    DrobotControl::print_usage,
+};
+
+int drobot_att_control_main(int argc, char *argv[])
+{
+    return ModuleBase::main(DrobotControl::desc, argc, argv);
+}
