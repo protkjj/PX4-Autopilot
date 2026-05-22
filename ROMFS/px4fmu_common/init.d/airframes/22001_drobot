@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# @name Drobot Hybrid (Quad + Rover)
+#
+# @type Quadrotor x
+# @class Copter
+#
+# @maintainer Dynamic Lab
+#
+
+. ${R}etc/init.d/rc.mc_defaults
+
+# ── Quad X 로터 설정 (MAIN 1~4) ──
+# PX4 표준 Quad X 배치:
+#   Rotor 0: 우전방 (CW),  Rotor 1: 좌후방 (CCW)
+#   Rotor 2: 우후방 (CW),  Rotor 3: 좌전방 (CCW)
+# PX/PY: 로터 위치 (부호만 중요, 양수=전방/우측)
+# KM: 토크 계수 (기본 0.05는 CW, -0.05는 CCW)
+param set-default CA_ROTOR_COUNT 4
+param set-default CA_ROTOR0_PX 1
+param set-default CA_ROTOR0_PY 1
+param set-default CA_ROTOR1_PX -1
+param set-default CA_ROTOR1_PY -1
+param set-default CA_ROTOR2_PX 1
+param set-default CA_ROTOR2_PY -1
+param set-default CA_ROTOR2_KM -0.05
+param set-default CA_ROTOR3_PX -1
+param set-default CA_ROTOR3_PY 1
+param set-default CA_ROTOR3_KM -0.05
+
+# ── MAIN (I/O) PWM 출력 매핑 ──
+# 101~104: Motor 1~4 (PX4 제어)
+# 407~408: RC_AUX1~2 패스스루 (바퀴모터, RC 직접 제어)
+param set-default PWM_MAIN_FUNC1 101
+param set-default PWM_MAIN_FUNC2 102
+param set-default PWM_MAIN_FUNC3 103
+param set-default PWM_MAIN_FUNC4 104
+param set-default PWM_MAIN_FUNC5 407
+param set-default PWM_MAIN_FUNC6 408
+param set-default PWM_MAIN_FUNC7 0
+param set-default PWM_MAIN_FUNC8 0
+
+# ── AUX (FMU) PWM 출력 매핑 ──
+# 409: RC_AUX3 패스스루 (서보 - 바퀴 올리기/내리기)
+# 410: RC_AUX4 패스스루 (선형 액추에이터 - 바퀴 수직/수평 회전)
+param set-default PWM_AUX_FUNC1 409
+param set-default PWM_AUX_FUNC2 410
+param set-default PWM_AUX_FUNC3 0
+param set-default PWM_AUX_FUNC4 0
+param set-default PWM_AUX_FUNC5 0
+param set-default PWM_AUX_FUNC6 0
+param set-default PWM_AUX_FUNC7 0
+param set-default PWM_AUX_FUNC8 0
